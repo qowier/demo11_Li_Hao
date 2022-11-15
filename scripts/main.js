@@ -5,7 +5,7 @@ firebase.auth().onAuthStateChanged(user => {
         console.log(currentUser);
 
         // the following functions are always called when someone is logged in
-        read_display_Quote();
+        readQuote();
         insertName();
         populateCardsDynamically();
     } else {
@@ -15,17 +15,12 @@ firebase.auth().onAuthStateChanged(user => {
     }
 });
 
-function read_display_Quote() {
-  //console.log("inside the function")
-
-  //get into the right collection
-  db.collection("quotes")
-    .doc("tuesday")
-    .onSnapshot(function (tuesdayDoc) {
-      //console.log(tuesdayDoc.data());
-      document.getElementById("quote-goes-here").innerHTML =
-        tuesdayDoc.data().quote;
-    });
+function readQuote() {
+  db.collection("quotes").doc("Tuesday")
+      .onSnapshot(tuesdayDoc => {
+          console.log("current document data: " + tuesdayDoc.data());
+          document.getElementById("quote-goes-here").innerHTML = tuesdayDoc.data().quote;
+      })
 }
 
 // Insert name function using the global variable "currentUser"
@@ -44,55 +39,58 @@ function writeHikes() {
   var hikesRef = db.collection("hikes");
 
   hikesRef.add({
-    code: "BBY01",
-    name: "Burnaby Lake Park Trail", //replace with your own city?
-    city: "Burnaby",
-    province: "BC",
-    level: "easy",
-    length: "10",
-    details: "Elmo goes here regularly",
-    last_updated: firebase.firestore.FieldValue.serverTimestamp(),
+      code: "BBY01",
+      name: "Burnaby Lake Park Trail", //replace with your own city?
+      city: "Burnaby",
+      province: "BC",
+      level: "easy",
+      details: "Haurence once every 10 years",
+      length: 10,          //number value
+      length_time: 60,     //number value
+      last_updated: firebase.firestore.FieldValue.serverTimestamp()  //current system time
   });
   hikesRef.add({
-    code: "AM01",
-    name: "Buntzen Lake Trail Trail", //replace with your own city?
-    city: "Anmore",
-    province: "BC",
-    level: "moderate",
-    length: "10.5",
-    details: "Elmo goes here regularly",
-    last_updated: firebase.firestore.FieldValue.serverTimestamp(),
+      code: "AM01",
+      name: "Buntzen Lake Trail", //replace with your own city?
+      city: "Anmore",
+      province: "BC",
+      level: "moderate",
+      details: "Jack goes here every week",
+      length: 10.5,      //number value
+      length_time: 80,   //number value
+      last_updated: firebase.firestore.Timestamp.fromDate(new Date("March 10, 2022"))
   });
   hikesRef.add({
-    code: "NV01",
-    name: "Mount Seymoure Trail", //replace with your own city?
-    city: "North Vancouver",
-    province: "BC",
-    level: "hard",
-    length: "8.2",
-    details: "Elmo goes here regularly",
-    last_updated: firebase.firestore.Timestamp.fromDate(
-      new Date("March 10, 2022")
-    ),
+      code: "NV01",
+      name: "Mount Seymour Trail", //replace with your own city?
+      city: "North Vancouver",
+      province: "BC",
+      level: "hard",
+      details: "Barry finishes the hike every morning",
+      length: 8.2,        //number value
+      length_time: 120,   //number value
+      last_updated: firebase.firestore.Timestamp.fromDate(new Date("January 1, 2022"))
   });
 }
 
 function populateCardsDynamically() {
-  let hikeCardTemplate = document.getElementById("hikeCardTemplate");  //card template
-  let hikeCardGroup = document.getElementById("hikeCardGroup");   //where to append card
+  let hikeCardTemplate = document.getElementById("hikeCardTemplate");
+  let hikeCardGroup = document.getElementById("hikes-go-here");
   
-  //doublecheck: is your Firestore collection called "hikes" or "Hikes"?
-  db.collection("hikes").get()   
+  db.collection("hikes")
+    .orderBy("length_time")            //NEW LINE;  what do you want to sort by?
+    .limit(5)                       //NEW LINE:  how many do you want to get?
+    .get()
       .then(allHikes => {
           allHikes.forEach(doc => {
               var hikeName = doc.data().name; //gets the name field
               var hikeID = doc.data().code; //gets the unique ID field
               var hikeLength = doc.data().length; //gets the length field
               let testHikeCard = hikeCardTemplate.content.cloneNode(true);
-              testHikeCard.querySelector('.card-title').innerHTML = hikeName;
-              testHikeCard.querySelector('.card-length').innerHTML = hikeLength;
+              testHikeCard.querySelector('.card-title').innerHTML = hikeName;     //equiv getElementByClassName
+              testHikeCard.querySelector('.card-length').innerHTML = hikeLength;  //equiv getElementByClassName
               testHikeCard.querySelector('a').onclick = () => setHikeData(hikeID);
-
+              
               //next 2 lines are new for demo#11
               //this line sets the id attribute for the <i> tag in the format of "save-hikdID" 
               //so later we know which hike to bookmark based on which hike was clicked
@@ -100,14 +98,15 @@ function populateCardsDynamically() {
               // this line will call a function to save the hikes to the user's document             
               testHikeCard.querySelector('i').onclick = () => saveBookmark(hikeID);
 
-              testHikeCard.querySelector('img').src = `./images/${hikeID}.jpg`;
+              testHikeCard.querySelector('img').src = `./images/${hikeID}.jpg`;   //equiv getElementByTagName
               hikeCardGroup.appendChild(testHikeCard);
           })
+
       })
 }
 
 function setHikeData(id){
-    localStorage.setItem ('hikeID', id);
+  localStorage.setItem ('hikeID', id);
 }
 
 //-----------------------------------------------------------------------------
