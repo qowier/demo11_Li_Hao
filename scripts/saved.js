@@ -19,7 +19,7 @@ function getBookmarks(user) {
                   size = snap.size;
                   queryData = snap.docs;
                   
-                  if (size == 2) {
+                  if (size == 1) {
                       var doc = queryData[0].data();
                       var hikeName = doc.name; //gets the name field
                       var hikeID = doc.code; //gets the unique ID field
@@ -39,4 +39,3 @@ function getBookmarks(user) {
           });
       })
 }
-

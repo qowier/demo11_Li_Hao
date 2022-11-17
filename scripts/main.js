@@ -99,6 +99,7 @@ function populateCardsDynamically() {
               testHikeCard.querySelector('i').onclick = () => saveBookmark(hikeID);
 
               testHikeCard.querySelector('img').src = `./images/${hikeID}.jpg`;   //equiv getElementByTagName
+              testHikeCard.querySelector('.read-more').href = "eachHike.html?hikeName="+hikeName +"&id=" + hikeID;
               hikeCardGroup.appendChild(testHikeCard);
           })
 
