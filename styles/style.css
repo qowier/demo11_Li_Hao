@@ -1,8 +1,7 @@
-
-/*-------------------------------------
- * customize material design icon sizes 
- *-------------------------------------
- */
+@font-face {
+  font-family: "comic-neue";
+  src: url("styles/ComicNeue-Regular.ttf" format("ttf");
+}
 
 .material-icons.md-18 { font-size: 18px; }
 .material-icons.md-24 { font-size: 24px; }
@@ -10,4 +9,19 @@
 .material-icons.md-48 { font-size: 48px; }
 .material-icons{
   cursor: pointer;
+}
+
+.btn-primary {
+  color: #f0e6ef;
+  font-size: 150%;
+  background-color: #b8bedd;
+}
+
+body {
+  font-family: "comie-neue";
+  background-color: #f0a6ca;
+}
+
+.bg-info {
+  background-color: #9c89b8 !important;
 }
